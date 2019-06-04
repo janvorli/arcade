@@ -15,12 +15,12 @@ stages:
           artifactName: 'PackageArtifacts'
 
       - task: PowerShell@2
-          displayName: Validate
-          inputs:
-          filePath: eng\common\sdk-task.ps1
-          arguments: -task SigningValidation -restore -msbuildEngine dotnet
-              /p:PackageBasePath='$(Build.ArtifactStagingDirectory)/PackageArtifacts'
-              /p:Configuration=$(_BuildConfig)
+        displayName: Validate
+        inputs:
+        filePath: eng\common\sdk-task.ps1
+        arguments: -task SigningValidation -restore -msbuildEngine dotnet
+            /p:PackageBasePath='$(Build.ArtifactStagingDirectory)/PackageArtifacts'
+            /p:Configuration=$(_BuildConfig)
         
   - job:
     displayName: SourceLink Validation
