@@ -178,5 +178,5 @@ stages:
                 SYSTEM_ACCESSTOKEN: $(System.AccessToken)
                 HelixAccessToken: $(HelixApiAccessToken)
 
-- ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-  - template: eng\common\publishing\publishing.yml
+#- ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+#  - template: eng\common\publishing\publishing.yml
