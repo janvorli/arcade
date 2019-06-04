@@ -1,5 +1,5 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. See the LICENSE file in the project root for more information. -->
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk" DefaultTargets="ValidateSigning">
   <!--
     This MSBuild file is intended to be used as the body of the default 
     publishing release pipeline. The release pipeline will use this file
@@ -8,21 +8,15 @@
   
     Parameters:
   
-      - PackageBasePath   : Directory containing all files that need to be validated.
-      - SignValidationExclusionList   : ItemGroup containing exclusion list to be forwarded to SignCheck.
-      - EnableJarSigningCheck    : Whether .jar files should be validated.
-      - EnableStrongNameCheck    : Whether strong name check should be performed.
+      - PackageBasePath         : Directory containing all files that need to be validated.
+      - SignCheckExclusionsFile : Path to file containing exclusion list to be used by SignCheck.
+      - EnableJarSigningCheck   : Whether .jar files should be validated.
+      - EnableStrongNameCheck   : Whether strong name check should be performed.
   -->
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
-
-  <!--
-    From 'Signing.props' we import $(SignValidationExclusionList)
-  -->
-  <Import Project="$(MSBuildThisFileDirectory)Signing.props" Condition="Exists('$(MSBuildThisFileDirectory)Signing.props')" />
-  <Import Project="$(MSBuildThisFileDirectory)Versions.props" />
 
   <Target Name="ValidateSigning">
     <PropertyGroup>
@@ -31,7 +25,6 @@
       <SignCheckInputDir>$(PackageBasePath)</SignCheckInputDir>
       <SignCheckLog>signcheck.log</SignCheckLog>
       <SignCheckErrorLog>signcheck.errors.log</SignCheckErrorLog>
-      <SignCheckExclusionsFile>signcheck.exclusions.txt</SignCheckExclusionsFile>
     </PropertyGroup>
     
     <ItemGroup>
@@ -46,17 +39,10 @@
       <SignCheckArgs Include="--error-log-file $(SignCheckErrorLog)" />
       <SignCheckArgs Include="--input-files $(SignCheckInputDir)" />
       
-      <SignCheckArgs Include="--exclusions-file $(SignCheckExclusionsFile)" Condition="'@(SignValidationExclusionList)' != ''" />
+      <SignCheckArgs Include="--exclusions-file $(SignCheckExclusionsFile)" Condition="'$(SignCheckExclusionsFile)' != '' and Exists($(SignCheckExclusionsFile))" />
       <SignCheckArgs Include="--verify-jar" Condition="'$(EnableJarSigningCheck)' == 'true'" />
       <SignCheckArgs Include="--verify-strongname" Condition="'$(EnableStrongNameCheck)' == 'true'" />
     </ItemGroup>
-   
-    <WriteLinesToFile 
-      File="$(SignCheckExclusionsFile)"
-      Lines="@(SignValidationExclusionList)"
-      Condition="'@(SignValidationExclusionList)' != ''"
-      Overwrite="true"
-      Encoding="Unicode"/>
     
     <!--
       IgnoreExitCode='true' because the tool doesn't return '0' on success.
