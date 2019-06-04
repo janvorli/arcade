@@ -17,8 +17,8 @@ stages:
       - task: PowerShell@2
         displayName: Validate
         inputs:
-        filePath: eng\common\sdk-task.ps1
-        arguments: -task SigningValidation -restore -msbuildEngine dotnet
+          filePath: eng\common\sdk-task.ps1
+          arguments: -task SigningValidation -restore -msbuildEngine dotnet
             /p:PackageBasePath='$(Build.ArtifactStagingDirectory)/PackageArtifacts'
             /p:Configuration=$(_BuildConfig)
         
