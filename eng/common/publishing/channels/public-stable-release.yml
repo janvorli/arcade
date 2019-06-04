@@ -53,21 +53,22 @@ stages:
           buildType: current
           artifactName: 'AssetManifests'
 
-      - task: DotNetCoreCLI@2
-        displayName: 'Install Tasks.Feed package'
+      - task: PowerShell@2
+        displayName: Publish
         inputs:
-          command: custom
-          projects: '$(Build.SourcesDirectory)/eng/common/publishing/PublishToPackageFeed.proj'
-          custom: restore
-          arguments: '/p:RestoreConfigFile='
-        
-      - task: DotNetCoreCLI@2
-        displayName: 'Publish To Package Feed'
-        inputs:
-          command: custom
-          projects: '$(Build.SourcesDirectory)/eng/common/publishing/PublishToPackageFeed.proj'
-          custom: msbuild
-          arguments: '/t:PublishToFeed /p:AccountKeyToStaticFeed=$(dotnetfeed-storage-access-key-1) /p:BARBuildId=$(BARBuildId) /p:MaestroApiEndpoint=$(MaestroApiEndpoint) /p:BuildAssetRegistryToken=$(MaestroApiPassword) /p:ManifestsBasePath=$(Build.ArtifactStagingDirectory)\AssetManifests\ /p:BlobBasePath=$(Build.ArtifactStagingDirectory)\BlobArtifacts\ /p:PackageBasePath=$(Build.ArtifactStagingDirectory)\PackageArtifacts\ /p:ArtifactsCategory=.NETCoreStable /p:OverrideAssetsWithSameName=true /p:PassIfExistingItemIdentical=true'
+          filePath: eng\common\sdk-task.ps1
+          arguments: -task PublishToPackageFeed -restore -msbuildEngine dotnet
+            /p:AccountKeyToStaticFeed=$(dotnetfeed-storage-access-key-1)
+            /p:BARBuildId=$(BARBuildId)
+            /p:MaestroApiEndpoint=$(MaestroApiEndpoint)
+            /p:BuildAssetRegistryToken=$(MaestroApiPassword)
+            /p:ManifestsBasePath=$(Build.ArtifactStagingDirectory)\AssetManifests\
+            /p:BlobBasePath=$(Build.ArtifactStagingDirectory)\BlobArtifacts\
+            /p:PackageBasePath=$(Build.ArtifactStagingDirectory)\PackageArtifacts\
+            /p:ArtifactsCategory=.NETCoreStable
+            /p:OverrideAssetsWithSameName=true
+            /p:PassIfExistingItemIdentical=true
+            /p:Configuration=Release
         
 
 - stage: PSR_PublishValidation

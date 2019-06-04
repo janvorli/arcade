@@ -20,7 +20,7 @@ stages:
           filePath: eng\common\sdk-task.ps1
           arguments: -task SigningValidation -restore -msbuildEngine dotnet
             /p:PackageBasePath='$(Build.ArtifactStagingDirectory)/PackageArtifacts'
-            /p:Configuration=$(_BuildConfig)
+            /p:Configuration=Release
         
   - job:
     displayName: SourceLink Validation

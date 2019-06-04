@@ -46,20 +46,16 @@ stages:
           buildType: current
           artifactName: 'BlobArtifacts'
 
-      - task: DotNetCoreCLI@2
-        displayName: 'Install Symbol Uploader'
+      - task: PowerShell@2
+        displayName: Publish
         inputs:
-          command: custom
-          projects: '$(Build.SourcesDirectory)/eng/common/publishing/PublishToSymbolServers.proj'
-          custom: restore
-        
-      - task: DotNetCoreCLI@2
-        displayName: 'Upload Symbols'
-        inputs:
-          command: custom
-          projects: '$(Build.SourcesDirectory)/eng/common/publishing/PublishToSymbolServers.proj'
-          custom: msbuild
-          arguments: '/t:PublishSymbols /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat) /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat) /p:PDBArtifactsDirectory=$(Build.ArtifactStagingDirectory)\PDBArtifacts\ /p:BlobBasePath=$(Build.ArtifactStagingDirectory)\BlobArtifacts\'
+          filePath: eng\common\sdk-task.ps1
+          arguments: -task PublishToSymbolServers -restore -msbuildEngine dotnet
+            /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat) 
+            /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat) 
+            /p:PDBArtifactsDirectory='$(Build.ArtifactStagingDirectory)/PDBArtifacts/'
+            /p:BlobBasePath='$(Build.ArtifactStagingDirectory)/BlobArtifacts/'
+            /p:Configuration=Release
 
   - job:
     displayName: Publish to Static Feed
@@ -88,21 +84,22 @@ stages:
           buildType: current
           artifactName: 'AssetManifests'
 
-      - task: DotNetCoreCLI@2
-        displayName: 'Install Tasks.Feed package'
+      - task: PowerShell@2
+        displayName: Publish
         inputs:
-          command: custom
-          projects: '$(Build.SourcesDirectory)/eng/common/publishing/PublishToPackageFeed.proj'
-          custom: restore
-          arguments: '/p:RestoreConfigFile='
-        
-      - task: DotNetCoreCLI@2
-        displayName: 'Publish To Package Feed'
-        inputs:
-          command: custom
-          projects: '$(Build.SourcesDirectory)/eng/common/publishing/PublishToPackageFeed.proj'
-          custom: msbuild
-          arguments: '/t:PublishToFeed /p:AccountKeyToStaticFeed=$(dotnetfeed-storage-access-key-1) /p:BARBuildId=$(BARBuildId) /p:MaestroApiEndpoint=$(MaestroApiEndpoint) /p:BuildAssetRegistryToken=$(MaestroApiPassword) /p:ManifestsBasePath=$(Build.ArtifactStagingDirectory)\AssetManifests\ /p:BlobBasePath=$(Build.ArtifactStagingDirectory)\BlobArtifacts\ /p:PackageBasePath=$(Build.ArtifactStagingDirectory)\PackageArtifacts\ /p:ArtifactsCategory=.NETCore /p:OverrideAssetsWithSameName=true /p:PassIfExistingItemIdentical=true'
+          filePath: eng\common\sdk-task.ps1
+          arguments: -task PublishToPackageFeed -restore -msbuildEngine dotnet
+            /p:AccountKeyToStaticFeed=$(dotnetfeed-storage-access-key-1)
+            /p:BARBuildId=$(BARBuildId)
+            /p:MaestroApiEndpoint=$(MaestroApiEndpoint)
+            /p:BuildAssetRegistryToken=$(MaestroApiPassword)
+            /p:ManifestsBasePath=$(Build.ArtifactStagingDirectory)\AssetManifests\
+            /p:BlobBasePath=$(Build.ArtifactStagingDirectory)\BlobArtifacts\
+            /p:PackageBasePath=$(Build.ArtifactStagingDirectory)\PackageArtifacts\
+            /p:ArtifactsCategory=.NETCore
+            /p:OverrideAssetsWithSameName=true
+            /p:PassIfExistingItemIdentical=true
+            /p:Configuration=Release
         
 
 - stage: PublishValidation
