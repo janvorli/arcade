@@ -9,26 +9,18 @@ stages:
       name: Hosted Windows 2019 with VS2019
     steps:
       - task: DownloadBuildArtifacts@0
-        displayName: 'Download Package Artifacts'
+        displayName: Download Package Artifacts
         inputs:
           buildType: current
           artifactName: 'PackageArtifacts'
 
-      - task: DotNetCoreCLI@2
-        displayName: 'Install SignCheck'
-        inputs:
-          command: custom
-          projects: '$(Build.SourcesDirectory)/eng/common/publishing/SigningValidation.proj'
-          custom: restore
-
-      - task: DotNetCoreCLI@2
-        displayName: 'Validate'
-        inputs:
-          command: custom
-          projects: '$(Build.SourcesDirectory)/eng/common/publishing/SigningValidation.proj'
-          custom: msbuild
-          arguments: '/t:ValidateSigning /p:PackageBasePath=$(Build.ArtifactStagingDirectory)\PackageArtifacts\'
-        continueOnError: true
+      - task: PowerShell@2
+          displayName: Validate
+          inputs:
+          filePath: eng\common\sdk-task.ps1
+          arguments: -task SigningValidation -restore -msbuildEngine dotnet
+              /p:PackageBasePath='$(Build.ArtifactStagingDirectory)/PackageArtifacts'
+              /p:Configuration=$(_BuildConfig)
         
   - job:
     displayName: SourceLink Validation
@@ -36,7 +28,7 @@ stages:
       name: Hosted Windows 2019 with VS2019
     steps:
       - task: DownloadBuildArtifacts@0
-        displayName: 'Download Blob Artifacts'
+        displayName: Download Blob Artifacts
         inputs:
           buildType: current
           artifactName: 'BlobArtifacts'
@@ -45,7 +37,7 @@ stages:
         displayName: 'Install SourceLink CLI'
         
       - task: PowerShell@2
-        displayName: 'Validate'
+        displayName: Validate
         inputs:
           targetType: filePath
           filePath: '$(Build.SourcesDirectory)/eng/common/publishing/SourceLinkValidation.ps1'
