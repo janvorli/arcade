@@ -44,8 +44,8 @@ stages:
           arguments: '$(Build.ArtifactStagingDirectory)\BlobArtifacts\ $(Agent.BuildDirectory)\Extract\ $(Agent.BuildDirectory)\SourceLinkTool\ false $(Build.Repository.Name) $(Build.SourceVersion)'
         continueOnError: true
 
-- template: \eng\common\publishing\channels\public-dev-release.yml
+- template: \eng\common\templates\release\channels\public-dev-release.yml
 
-- template: \eng\common\publishing\channels\public-stable-release.yml
+- template: \eng\common\templates\release\channels\public-stable-release.yml
 
-- template: \eng\common\publishing\channels\public-validation-release.yml
+- template: \eng\common\templates\release\channels\public-validation-release.yml
