@@ -1,0 +1,160 @@
+stages:
+- stage: Publish
+  dependsOn: validate
+  displayName: Developer Channel
+  jobs:
+  - job: setupMaestroVars
+    displayName: Setup Maestro Vars
+    pool:
+      name: Hosted Windows 2019 with VS2019
+    steps:
+      - task: DownloadBuildArtifacts@0
+        displayName: 'Download Release Configs'
+        inputs:
+          buildType: current
+          artifactName: 'ReleaseConfigs'
+
+      - task: powershell@1
+        name: setReleaseVars
+        displayName: Set Release Configs Vars
+        inputs:
+          scriptType: inlineScript
+          inlineScript: |
+            $BarId = Get-Content "$(Build.StagingDirectory)/ReleaseConfigs/BARBuildId.txt" 
+            Write-Host "##vso[task.setvariable variable=BARBuildId;]$BarId"
+            
+            Get-Content "$(Build.StagingDirectory)/ReleaseConfigs/Channels.txt" | ForEach-Object { $Channels += "$_ ," }
+            Write-Host "##vso[task.setvariable variable=InitialChannels;]$Channels"
+
+  - job:
+    displayName: Symbol Publishing
+    dependsOn: setupMaestroVars
+    condition: contains(dependencies.setupMaestroVars.outputs['setReleaseVars.InitialChannels'], 10)
+    pool:
+      name: Hosted Windows 2019 with VS2019
+    steps:
+      - task: DownloadBuildArtifacts@0
+        displayName: 'Download PDB Artifacts'
+        inputs:
+          buildType: current
+          artifactName: 'PDBArtifacts'
+        continueOnError: true
+
+      - task: DownloadBuildArtifacts@0
+        displayName: 'Download Blob Artifacts'
+        inputs:
+          buildType: current
+          artifactName: 'BlobArtifacts'
+
+      - task: DotNetCoreCLI@2
+        displayName: 'Install Symbol Uploader'
+        inputs:
+          command: custom
+          projects: '$(Build.SourcesDirectory)/eng/common/publishing/PublishToSymbolServers.proj'
+          custom: restore
+        
+      - task: DotNetCoreCLI@2
+        displayName: 'Upload Symbols'
+        inputs:
+          command: custom
+          projects: '$(Build.SourcesDirectory)/eng/common/publishing/PublishToSymbolServers.proj'
+          custom: msbuild
+          arguments: '/t:PublishSymbols /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat) /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat) /p:PDBArtifactsDirectory=$(Build.ArtifactStagingDirectory)\PDBArtifacts\ /p:BlobBasePath=$(Build.ArtifactStagingDirectory)\BlobArtifacts\'
+
+  - job:
+    displayName: Publish to Static Feed
+    dependsOn: setupMaestroVars
+    condition: contains(dependencies.setupMaestroVars.outputs['setReleaseVars.InitialChannels'], 10)
+    variables:
+      BARBuildId: $[ dependencies.setupMaestroVars.outputs['setReleaseVars.BARBuildId'] ]
+    pool:
+      name: Hosted Windows 2019 with VS2019
+    steps:
+      - task: DownloadBuildArtifacts@0
+        displayName: 'Download Package Artifacts'
+        inputs:
+          buildType: current
+          artifactName: 'PackageArtifacts'
+
+      - task: DownloadBuildArtifacts@0
+        displayName: 'Download Blob Artifacts'
+        inputs:
+          buildType: current
+          artifactName: 'BlobArtifacts'
+
+      - task: DownloadBuildArtifacts@0
+        displayName: 'Download Asset Manifests'
+        inputs:
+          buildType: current
+          artifactName: 'AssetManifests'
+
+      - task: DotNetCoreCLI@2
+        displayName: 'Install Tasks.Feed package'
+        inputs:
+          command: custom
+          projects: '$(Build.SourcesDirectory)/eng/common/publishing/PublishToPackageFeed.proj'
+          custom: restore
+          arguments: '/p:RestoreConfigFile='
+        
+      - task: DotNetCoreCLI@2
+        displayName: 'Publish To Package Feed'
+        inputs:
+          command: custom
+          projects: '$(Build.SourcesDirectory)/eng/common/publishing/PublishToPackageFeed.proj'
+          custom: msbuild
+          arguments: '/t:PublishToFeed /p:AccountKeyToStaticFeed=$(dotnetfeed-storage-access-key-1) /p:BARBuildId=$(BARBuildId) /p:MaestroApiEndpoint=$(MaestroApiEndpoint) /p:BuildAssetRegistryToken=$(MaestroApiPassword) /p:ManifestsBasePath=$(Build.ArtifactStagingDirectory)\AssetManifests\ /p:BlobBasePath=$(Build.ArtifactStagingDirectory)\BlobArtifacts\ /p:PackageBasePath=$(Build.ArtifactStagingDirectory)\PackageArtifacts\ /p:ArtifactsCategory=.NETCore /p:OverrideAssetsWithSameName=true /p:PassIfExistingItemIdentical=true'
+        
+
+- stage: PublishValidation
+  displayName: Publish Validation
+  jobs:
+  - job:
+    displayName: Symbol Availability
+    pool:
+      name: Hosted Windows 2019 with VS2019
+    steps:
+      - task: DownloadBuildArtifacts@0
+        displayName: 'Download Package Artifacts'
+        inputs:
+          buildType: current
+          artifactName: 'PackageArtifacts'
+
+      - powershell: 'dotnet tool install dotnet-symbol --tool-path $(Agent.BuildDirectory)/SymbolTool --version 1.0.1 --add-source https://api.nuget.org/v3/index.json'
+        displayName: 'Install DotNet Symbol'
+        
+      - task: PowerShell@2
+        displayName: 'Check Symbol Availability'
+        inputs:
+          targetType: filePath
+          filePath: '$(Build.SourcesDirectory)/eng/common/publishing/CheckSymbols.ps1'
+          arguments: '$(Build.ArtifactStagingDirectory)\PackageArtifacts\ $(Agent.BuildDirectory)\Temp\ $(Agent.BuildDirectory)\SymbolTool\'
+        continueOnError: true
+
+  - job:
+    displayName: Gather Drop
+    pool:
+      name: Hosted Windows 2019 with VS2019
+    steps:
+      - task: DownloadBuildArtifacts@0
+        displayName: 'Download Release Configs'
+        inputs:
+          buildType: current
+          artifactName: 'ReleaseConfigs'
+
+      - task: powershell@1
+        displayName: Set Release Configs Vars
+        inputs:
+          scriptType: inlineScript
+          inlineScript: |
+            $BarId = Get-Content "$(Build.StagingDirectory)/ReleaseConfigs/BARBuildId.txt" 
+            Write-Host "##vso[task.setvariable variable=BARBuildId;]$BarId"
+
+      - task: PowerShell@2
+        displayName: 'Setup Darc CLI'
+        inputs:
+          targetType: filePath
+          filePath: '$(Build.SourcesDirectory)/eng/common/darc-init.ps1'
+
+      - powershell: 'darc gather-drop --non-shipping --continue-on-error --id $(BARBuildId) --output-dir $(Agent.BuildDirectory)/Temp/Drop/ --bar-uri $(MaestroApiEndpoint) --password $(MaestroApiPassword)'
+        displayName: 'Run Darc gather-drop'
+        continueOnError: true
