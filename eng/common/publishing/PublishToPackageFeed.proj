@@ -16,7 +16,6 @@
     This won't be necessary once we solve this issue:
     https://github.com/dotnet/arcade/issues/2266
   -->
-  <Import Project="$(MSBuildThisFileDirectory)ArtifactsCategory.props" />
   <Import Project="$(MSBuildThisFileDirectory)Versions.props" />
   <Import Project="$(NuGetPackageRoot)microsoft.dotnet.build.tasks.feed\$(MicrosoftDotNetBuildTasksFeedVersion)\build\Microsoft.DotNet.Build.Tasks.Feed.targets" />
 
