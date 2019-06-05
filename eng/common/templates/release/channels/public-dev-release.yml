@@ -100,13 +100,13 @@ stages:
             /p:OverrideAssetsWithSameName=true
             /p:PassIfExistingItemIdentical=true
             /p:Configuration=Release
-            /bl:$(Agent.BuildDirectory)/publish_cesar.binlog
+            /bl:$(Build.ArtifactStagingDirectory)\publish_cesar.binlog
         continueOnError: true
 
       - task: PublishBuildArtifacts@1
         displayName: Publish BAR BuildId to VSTS
         inputs:
-          PathtoPublish: '$(Agent.BuildDirectory)/publish_cesar.binlog'
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)\publish_cesar.binlog'
           PublishLocation: Container
           ArtifactName: ReleaseConfigs
         
