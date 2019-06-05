@@ -201,8 +201,12 @@ stages:
         inputs:
           scriptType: inlineScript
           inlineScript: |
+            write-host "Endpoint: ${MaestroApiEndpoint}"
+            write-host "Endpoint: $(MaestroApiEndpoint)"
+            write-host "password: ${$MaestroApiPassword}" 
+            write-host "password: $($MaestroApiPassword)" 
             $headers = @{
                 "Accept" = "application/json"
                 "Authorization" = "Bearer $MaestroApiPassword"
             }
-            Invoke-RestMethod -Method Post -Headers $headers -Uri ${MaestroApiEndpoint}api/channels/1/builds/$BARBuildId?api-version=2019-01-16
+            Invoke-RestMethod -Method Post -Headers $headers -Uri $(MaestroApiEndpoint)api/channels/1/builds/$(BARBuildId)?api-version=2019-01-16
