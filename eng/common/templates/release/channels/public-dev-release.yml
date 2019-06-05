@@ -8,7 +8,9 @@ stages:
   - job:
     displayName: Symbol Publishing
     dependsOn: setupMaestroVars
-    condition: contains(dependencies.setupMaestroVars.outputs['setReleaseVars.InitialChannels'], 10)
+    variables:
+      - template: ../common-variables.yml
+    condition: contains(dependencies.setupMaestroVars.outputs['setReleaseVars.InitialChannels'], variables.PublicDevRelease_Channel_Id)
     pool:
       name: Hosted Windows 2019 with VS2019
     steps:

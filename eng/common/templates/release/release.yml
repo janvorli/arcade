@@ -57,6 +57,4 @@ stages:
 
 - template: \eng\common\templates\release\channels\public-dev-release.yml
 
-- template: \eng\common\templates\release\channels\public-stable-release.yml
-
 - template: \eng\common\templates\release\channels\public-validation-release.yml
