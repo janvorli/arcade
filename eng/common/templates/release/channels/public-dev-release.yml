@@ -197,12 +197,12 @@ stages:
       name: Hosted Windows 2019 with VS2019
     steps:
       - task: powershell@1
-        displayName: Set Release Configs Vars
+        displayName: Add Build to Channel
         inputs:
           scriptType: inlineScript
           inlineScript: |
             $headers = @{
-                'accept' = 'application/json'
-                'Authorization' = 'Bearer $(MaestroApiPassword)'
+                "Accept" = "application/json"
+                "Authorization" = "Bearer $MaestroApiPassword"
             }
-            Invoke-RestMethod -Method Post -Headers $headers -Uri $(MaestroApiEndpoint)/api/channels/10/builds/$(BARBuildId)?api-version=2019-01-16
+            Invoke-RestMethod -Method Post -Headers $headers -Uri ${MaestroApiEndpoint}api/channels/1/builds/$BARBuildId?api-version=2019-01-16
