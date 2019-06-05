@@ -115,19 +115,19 @@ stages:
   displayName: Publish Validation
   jobs:
   - job: setupMaestroVars
-      displayName: Setup Maestro Vars
-      pool:
-      name: Hosted Windows 2019 with VS2019
-      steps:
+    displayName: Setup Maestro Vars
+    pool:
+    name: Hosted Windows 2019 with VS2019
+    steps:
       - task: DownloadBuildArtifacts@0
-          displayName: Download Release Configs
-          inputs:
-            buildType: current
-            artifactName: 'ReleaseConfigs'
+        displayName: Download Release Configs
+        inputs:
+          buildType: current
+          artifactName: 'ReleaseConfigs'
 
       - task: powershell@1
-          name: setReleaseVars
-          displayName: Set Release Configs Vars
+        name: setReleaseVars
+        displayName: Set Release Configs Vars
           inputs:
             scriptType: inlineScript
             inlineScript: |
