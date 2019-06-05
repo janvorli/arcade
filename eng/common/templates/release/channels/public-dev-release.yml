@@ -138,27 +138,6 @@ stages:
         displayName: Run Darc gather-drop
         continueOnError: true
 
-  - job:
-    displayName: Promote Build
-    dependsOn: setupMaestroVars
-    condition: contains(dependencies.setupMaestroVars.outputs['setReleaseVars.InitialChannels'], 10)
-    variables:
-      BARBuildId: $[ dependencies.setupMaestroVars.outputs['setReleaseVars.BARBuildId'] ]
-    pool:
-      name: Hosted Windows 2019 with VS2019
-    steps:
-      - task: powershell@1
-        displayName: Add Build to Channel
-        inputs:
-          scriptType: inlineScript
-          inlineScript: |
-            write-host "Endpoint: ${MaestroApiEndpoint}"
-            write-host "Endpoint: $(MaestroApiEndpoint)"
-            write-host "password: ${MaestroApiPassword}" 
-            write-host "password: $(MaestroApiPassword)" 
-            write-host "url: $(MaestroApiEndpoint)api/channels/1/builds/$(BARBuildId)?api-version=2019-01-16"
-            $headers = @{
-                "Accept" = "application/json"
-                "Authorization" = "Bearer $(MaestroApiPassword)"
-            }
-            Invoke-RestMethod -Method Post -Headers $headers -Uri $(MaestroApiEndpoint)api/channels/1/builds/$(BARBuildId)?api-version=2019-01-16
+  - template: ../setup-maestro-vars.yml
+    parameters:
+      ChannelId: 10

@@ -1,0 +1,24 @@
+parameters:
+  ChannelId: 0
+
+jobs:
+- job:
+  displayName: Promote Build
+  dependsOn: setupMaestroVars
+  condition: contains(dependencies.setupMaestroVars.outputs['setReleaseVars.InitialChannels'], ${{ parameters.ChannelId }})
+  variables:
+    BARBuildId: $[ dependencies.setupMaestroVars.outputs['setReleaseVars.BARBuildId'] ]
+    ChannelId: ${{ parameters.ChannelId }}
+  pool:
+    name: Hosted Windows 2019 with VS2019
+  steps:
+    - task: powershell@1
+      displayName: Add Build to Channel
+      inputs:
+        scriptType: inlineScript
+        inlineScript: |
+          $headers = @{
+            "Accept" = "application/json"
+            "Authorization" = "Bearer $(MaestroApiPassword)"
+          }
+          Invoke-RestMethod -Method Post -Headers $headers -Uri $(MaestroApiEndpoint)api/channels/$(ChannelId)/builds/$(BARBuildId)?api-version=2019-01-16

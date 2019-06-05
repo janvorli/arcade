@@ -73,3 +73,7 @@ stages:
       - powershell: 'darc gather-drop --id $(BARBuildId) --output-dir $(Agent.BuildDirectory)/Temp/Drop/ --bar-uri $(MaestroApiEndpoint) --password $(MaestroApiPassword)'
         displayName: Run Darc gather-drop
         continueOnError: true
+
+  - template: ../setup-maestro-vars.yml
+    parameters:
+      ChannelId: 11
