@@ -97,6 +97,8 @@ stages:
 
   - job:
     displayName: Symbol Availability
+    dependsOn: setupMaestroVars
+    condition: contains(dependencies.setupMaestroVars.outputs['setReleaseVars.InitialChannels'], 10)
     pool:
       name: Hosted Windows 2019 with VS2019
     steps:
@@ -120,6 +122,7 @@ stages:
   - job:
     displayName: Gather Drop
     dependsOn: setupMaestroVars
+    condition: contains(dependencies.setupMaestroVars.outputs['setReleaseVars.InitialChannels'], 10)
     variables:
       BARBuildId: $[ dependencies.setupMaestroVars.outputs['setReleaseVars.BARBuildId'] ]
     pool:
@@ -138,6 +141,7 @@ stages:
   - job:
     displayName: Promote Build
     dependsOn: setupMaestroVars
+    condition: contains(dependencies.setupMaestroVars.outputs['setReleaseVars.InitialChannels'], 10)
     variables:
       BARBuildId: $[ dependencies.setupMaestroVars.outputs['setReleaseVars.BARBuildId'] ]
     pool:
