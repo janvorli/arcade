@@ -1,0 +1,7 @@
+variables:
+  PublicDevRelease_Channel_Id: 1
+  PublicStableRelease_Channel_Id: 2
+  PublicValidationRelease_Channel_Id: 3
+
+  SourceLinkCLIVersion: 3.0.0
+  SymbolToolVersion: 1.0.1

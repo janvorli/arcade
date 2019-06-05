@@ -25,6 +25,8 @@ stages:
         
   - job:
     displayName: SourceLink Validation
+    variables:
+      - template: common-variables.yml
     pool:
       name: Hosted Windows 2019 with VS2019
     steps:
@@ -34,8 +36,12 @@ stages:
           buildType: current
           artifactName: 'BlobArtifacts'
 
-      - powershell: 'dotnet tool install sourcelink --tool-path $(Agent.BuildDirectory)/SourceLinkTool --version 3.0.0'
+      - task: powershell@1
         displayName: Install SourceLink CLI
+        inputs:
+          scriptType: inlineScript
+          inlineScript: |
+            dotnet tool install sourcelink --tool-path $(Agent.BuildDirectory)/SourceLinkTool --version $(SourceLinkCLIVersion)
         
       - task: PowerShell@2
         displayName: Validate

@@ -98,6 +98,8 @@ stages:
   - job:
     displayName: Symbol Availability
     dependsOn: setupMaestroVars
+    variables:
+      - template: ../common-variables.yml
     condition: contains(dependencies.setupMaestroVars.outputs['setReleaseVars.InitialChannels'], 10)
     pool:
       name: Hosted Windows 2019 with VS2019
@@ -108,8 +110,12 @@ stages:
           buildType: current
           artifactName: 'PackageArtifacts'
 
-      - powershell: 'dotnet tool install dotnet-symbol --tool-path $(Agent.BuildDirectory)/SymbolTool --version 1.0.1 --add-source https://api.nuget.org/v3/index.json'
-        displayName: Install DotNet Symbol
+      - task: powershell@1
+        displayName:  Install DotNet Symbol
+        inputs:
+          scriptType: inlineScript
+          inlineScript: |
+            dotnet tool install dotnet-symbol --tool-path $(Agent.BuildDirectory)/SymbolTool --version $(SymbolToolVersion) --add-source https://api.nuget.org/v3/index.json
         
       - task: PowerShell@2
         displayName: Check Symbol Availability
