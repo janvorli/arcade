@@ -157,12 +157,11 @@ stages:
         continueOnError: true
 
   - job:
-    displayname: Promote Build
+    displayName: Promote Build
     pool:
       name: Hosted Windows 2019 with VS2019
     steps:
       - task: powershell@1
-        name: setReleaseVars
         displayName: Set Release Configs Vars
         inputs:
           scriptType: inlineScript
