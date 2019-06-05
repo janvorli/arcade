@@ -119,6 +119,9 @@ stages:
 
   - job:
     displayName: Gather Drop
+    dependsOn: setupMaestroVars
+    variables:
+      BARBuildId: $[ dependencies.setupMaestroVars.outputs['setReleaseVars.BARBuildId'] ]
     pool:
       name: Hosted Windows 2019 with VS2019
     steps:
