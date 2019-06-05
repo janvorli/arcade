@@ -8,7 +8,9 @@ variables:
     value: DotNetCore
   - name: _PublishUsingPipelines
     value: true
-  
+  - name: _DotNetArtifactsCategory
+    value: .NETCore
+
   - name: MaestroApiEndpoint
     value: 'https://maestro-int.westus2.cloudapp.azure.com/'
   - name: MaestroApiPassword

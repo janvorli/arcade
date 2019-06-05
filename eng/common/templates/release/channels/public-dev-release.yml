@@ -77,19 +77,10 @@ stages:
             /p:ManifestsBasePath='$(Build.ArtifactStagingDirectory)/AssetManifests/' 
             /p:BlobBasePath='$(Build.ArtifactStagingDirectory)/BlobArtifacts/' 
             /p:PackageBasePath='$(Build.ArtifactStagingDirectory)/PackageArtifacts/' 
-            /p:ArtifactsCategory='.NETCore' 
+            /p:ArtifactsCategory='$(_DotNetArtifactsCategory)' 
             /p:OverrideAssetsWithSameName=true 
             /p:PassIfExistingItemIdentical=true 
             /p:Configuration=Release 
-        continueOnError: true
-
-      - task: PublishBuildArtifacts@1
-        displayName: Publish BAR BuildId to VSTS
-        inputs:
-          PathtoPublish: 'D:\a\1\s\artifacts\log\Debug\PublishToPackageFeed.binlog'
-          PublishLocation: Container
-          ArtifactName: ReleaseConfigs
-        condition: always()
         
 
 - stage: PublishValidation
@@ -123,9 +114,8 @@ stages:
         displayName: Check Symbol Availability
         inputs:
           targetType: filePath
-          filePath: '$(Build.SourcesDirectory)/eng/common/publishing/CheckSymbols.ps1'
+          filePath: '$(Build.SourcesDirectory)/eng/common/release/CheckSymbols.ps1'
           arguments: -InputPath $(Build.ArtifactStagingDirectory)\PackageArtifacts\ -ExtractPath $(Agent.BuildDirectory)\Temp\ -SymbolToolPath $(Agent.BuildDirectory)\SymbolTool\
-        continueOnError: true
 
   - job:
     displayName: Gather Drop
@@ -142,8 +132,12 @@ stages:
           targetType: filePath
           filePath: '$(Build.SourcesDirectory)/eng/common/darc-init.ps1'
 
-      - powershell: 'darc gather-drop --non-shipping --continue-on-error --id $(BARBuildId) --output-dir $(Agent.BuildDirectory)/Temp/Drop/ --bar-uri $(MaestroApiEndpoint) --password $(MaestroApiPassword)'
+      - task: powershell@1
         displayName: Run Darc gather-drop
+        inputs:
+          scriptType: inlineScript
+          inlineScript: |
+            darc gather-drop --non-shipping --continue-on-error --id $(BARBuildId) --output-dir $(Agent.BuildDirectory)/Temp/Drop/ --bar-uri $(MaestroApiEndpoint) --password $(MaestroApiPassword)
         continueOnError: true
 
   - template: ../promote-build.yml

@@ -1,6 +1,8 @@
 stages:
 - stage: PVR_Publish
   dependsOn: validate
+  variables:
+    - template: ../common-variables.yml
   displayName: Validation Channel
   jobs:
   - template: ../setup-maestro-vars.yml
@@ -8,7 +10,7 @@ stages:
   - job:
     displayName: Publish to Static Feed
     dependsOn: setupMaestroVars
-    condition: contains(dependencies.setupMaestroVars.outputs['setReleaseVars.InitialChannels'], 12)
+    condition: contains(dependencies.setupMaestroVars.outputs['setReleaseVars.InitialChannels'], variables.PublicValidationRelease_Channel_Id)
     variables:
       BARBuildId: $[ dependencies.setupMaestroVars.outputs['setReleaseVars.BARBuildId'] ]
     pool:
@@ -44,7 +46,7 @@ stages:
             /p:ManifestsBasePath='$(Build.ArtifactStagingDirectory)/AssetManifests/' 
             /p:BlobBasePath='$(Build.ArtifactStagingDirectory)/BlobArtifacts/' 
             /p:PackageBasePath='$(Build.ArtifactStagingDirectory)/PackageArtifacts/' 
-            /p:ArtifactsCategory='.NETCoreValidation' 
+            /p:ArtifactsCategory='$(_DotNetArtifactsCategory)' 
             /p:OverrideAssetsWithSameName=true 
             /p:PassIfExistingItemIdentical=true 
             /p:Configuration=Release 
@@ -52,13 +54,15 @@ stages:
 
 - stage: PVR_PublishValidation
   displayName: Publish Validation
+  variables:
+    - template: ../common-variables.yml
   jobs:
   - template: ../setup-maestro-vars.yml
 
   - job:
     displayName: Gather Drop
     dependsOn: setupMaestroVars
-    condition: contains(dependencies.setupMaestroVars.outputs['setReleaseVars.InitialChannels'], 12)
+    condition: contains(dependencies.setupMaestroVars.outputs['setReleaseVars.InitialChannels'], variables.PublicValidationRelease_Channel_Id)
     variables:
       BARBuildId: $[ dependencies.setupMaestroVars.outputs['setReleaseVars.BARBuildId'] ]
     pool:
@@ -70,10 +74,14 @@ stages:
           targetType: filePath
           filePath: '$(Build.SourcesDirectory)/eng/common/darc-init.ps1'
 
-      - powershell: 'darc gather-drop --id $(BARBuildId) --output-dir $(Agent.BuildDirectory)/Temp/Drop/ --bar-uri $(MaestroApiEndpoint) --password $(MaestroApiPassword)'
+      - task: powershell@1
         displayName: Run Darc gather-drop
+        inputs:
+          scriptType: inlineScript
+          inlineScript: |
+            darc gather-drop --non-shipping --continue-on-error --id $(BARBuildId) --output-dir $(Agent.BuildDirectory)/Temp/Drop/ --bar-uri $(MaestroApiEndpoint) --password $(MaestroApiPassword)
         continueOnError: true
 
   - template: ../promote-build.yml
     parameters:
-      ChannelId: 12
+      ChannelId: ${{ variables.PublicValidationRelease_Channel_Id }}

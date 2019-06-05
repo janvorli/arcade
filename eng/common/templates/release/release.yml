@@ -46,11 +46,10 @@ stages:
       - task: PowerShell@2
         displayName: Validate
         inputs:
-          filePath: $(Build.SourcesDirectory)/eng/common/publishing/SourceLinkValidation.ps1
+          filePath: $(Build.SourcesDirectory)/eng/common/release/SourceLinkValidation.ps1
           arguments: -InputPath $(Build.ArtifactStagingDirectory)\BlobArtifacts\ 
             -ExtractPath $(Agent.BuildDirectory)\Extract\ 
             -SourceLinkToolPath $(Agent.BuildDirectory)\SourceLinkTool\ 
-            -SkipRepoCaching false 
             -GHRepoName $(Build.Repository.Name) 
             -GHCommit $(Build.SourceVersion)
         continueOnError: true
