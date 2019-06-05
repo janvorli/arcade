@@ -1,6 +1,8 @@
 stages:
 - stage: Publish
   dependsOn: validate
+  variables:
+    - template: ../common-variables.yml
   displayName: Developer Channel
   jobs:
   - template: ../setup-maestro-vars.yml
@@ -8,8 +10,6 @@ stages:
   - job:
     displayName: Symbol Publishing
     dependsOn: setupMaestroVars
-    variables:
-      - template: ../common-variables.yml
     condition: contains(dependencies.setupMaestroVars.outputs['setReleaseVars.InitialChannels'], variables.PublicDevRelease_Channel_Id)
     pool:
       name: Hosted Windows 2019 with VS2019
@@ -41,9 +41,9 @@ stages:
   - job:
     displayName: Publish to Static Feed
     dependsOn: setupMaestroVars
-    condition: contains(dependencies.setupMaestroVars.outputs['setReleaseVars.InitialChannels'], 10)
     variables:
       BARBuildId: $[ dependencies.setupMaestroVars.outputs['setReleaseVars.BARBuildId'] ]
+    condition: contains(dependencies.setupMaestroVars.outputs['setReleaseVars.InitialChannels'], variables.PublicDevRelease_Channel_Id)
     pool:
       name: Hosted Windows 2019 with VS2019
     steps:
@@ -94,15 +94,15 @@ stages:
 
 - stage: PublishValidation
   displayName: Publish Validation
+  variables:
+    - template: ../common-variables.yml  
   jobs:
   - template: ../setup-maestro-vars.yml
 
   - job:
     displayName: Symbol Availability
     dependsOn: setupMaestroVars
-    variables:
-      - template: ../common-variables.yml
-    condition: contains(dependencies.setupMaestroVars.outputs['setReleaseVars.InitialChannels'], 10)
+    condition: contains(dependencies.setupMaestroVars.outputs['setReleaseVars.InitialChannels'], variables.PublicDevRelease_Channel_Id)
     pool:
       name: Hosted Windows 2019 with VS2019
     steps:
@@ -130,9 +130,9 @@ stages:
   - job:
     displayName: Gather Drop
     dependsOn: setupMaestroVars
-    condition: contains(dependencies.setupMaestroVars.outputs['setReleaseVars.InitialChannels'], 10)
     variables:
       BARBuildId: $[ dependencies.setupMaestroVars.outputs['setReleaseVars.BARBuildId'] ]
+    condition: contains(dependencies.setupMaestroVars.outputs['setReleaseVars.InitialChannels'], variables.PublicDevRelease_Channel_Id)
     pool:
       name: Hosted Windows 2019 with VS2019
     steps:
@@ -148,4 +148,4 @@ stages:
 
   - template: ../promote-build.yml
     parameters:
-      ChannelId: 10
+      ChannelId: ${{ variables.PublicDevRelease_Channel_Id }}
