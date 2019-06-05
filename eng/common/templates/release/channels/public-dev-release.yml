@@ -89,18 +89,17 @@ stages:
         inputs:
           filePath: eng\common\sdk-task.ps1
           arguments: -task PublishToPackageFeed -restore -msbuildEngine dotnet
-            /p:AccountKeyToStaticFeed=$(dotnetfeed-storage-access-key-1)
-            /p:BARBuildId=$(BARBuildId)
-            /p:MaestroApiEndpoint=$(MaestroApiEndpoint)
-            /p:BuildAssetRegistryToken=$(MaestroApiPassword)
-            /p:ManifestsBasePath=$(Build.ArtifactStagingDirectory)\AssetManifests\
-            /p:BlobBasePath=$(Build.ArtifactStagingDirectory)\BlobArtifacts\
-            /p:PackageBasePath=$(Build.ArtifactStagingDirectory)\PackageArtifacts\
-            /p:ArtifactsCategory=.NETCore
-            /p:OverrideAssetsWithSameName=true
-            /p:PassIfExistingItemIdentical=true
-            /p:Configuration=Release
-            /bl:$(Build.ArtifactStagingDirectory)\publish_cesar.binlog
+            /p:AccountKeyToStaticFeed='$(dotnetfeed-storage-access-key-1)' 
+            /p:BARBuildId=$(BARBuildId) 
+            /p:MaestroApiEndpoint='$(MaestroApiEndpoint)' 
+            /p:BuildAssetRegistryToken='$(MaestroApiPassword)' 
+            /p:ManifestsBasePath='$(Build.ArtifactStagingDirectory)\AssetManifests\' 
+            /p:BlobBasePath='$(Build.ArtifactStagingDirectory)\BlobArtifacts\' 
+            /p:PackageBasePath='$(Build.ArtifactStagingDirectory)\PackageArtifacts\' 
+            /p:ArtifactsCategory='.NETCore' 
+            /p:OverrideAssetsWithSameName=true 
+            /p:PassIfExistingItemIdentical=true 
+            /p:Configuration=Release 
         continueOnError: true
 
       - task: PublishBuildArtifacts@1
