@@ -106,9 +106,10 @@ stages:
       - task: PublishBuildArtifacts@1
         displayName: Publish BAR BuildId to VSTS
         inputs:
-          PathtoPublish: '$(Build.ArtifactStagingDirectory)\publish_cesar.binlog'
+          PathtoPublish: 'D:\a\1\s\artifacts\log\Debug\PublishBuildAssets.binlo'
           PublishLocation: Container
           ArtifactName: ReleaseConfigs
+        condition: always()
         
 
 - stage: PublishValidation
