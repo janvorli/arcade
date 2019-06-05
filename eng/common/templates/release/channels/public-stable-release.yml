@@ -3,7 +3,7 @@ stages:
   dependsOn: validate
   displayName: Stable Channel
   jobs:
-  - template: setup-maestro-vars.yml
+  - template: ../setup-maestro-vars.yml
 
   - job:
     displayName: Publish to Static Feed
@@ -53,6 +53,8 @@ stages:
 - stage: PSR_PublishValidation
   displayName: Publish Validation
   jobs:
+  - template: ../setup-maestro-vars.yml
+
   - job:
     displayName: Gather Drop
     dependsOn: setupMaestroVars

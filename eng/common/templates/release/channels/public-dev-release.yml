@@ -3,28 +3,7 @@ stages:
   dependsOn: validate
   displayName: Developer Channel
   jobs:
-  - job: setupMaestroVars
-    displayName: Setup Maestro Vars
-    pool:
-      name: Hosted Windows 2019 with VS2019
-    steps:
-      - task: DownloadBuildArtifacts@0
-        displayName: Download Release Configs
-        inputs:
-          buildType: current
-          artifactName: 'ReleaseConfigs'
-
-      - task: powershell@1
-        name: setReleaseVars
-        displayName: Set Release Configs Vars
-        inputs:
-          scriptType: inlineScript
-          inlineScript: |
-            $BarId = Get-Content "$(Build.StagingDirectory)/ReleaseConfigs/BARBuildId.txt" 
-            Write-Host "##vso[task.setvariable variable=BARBuildId;]$BarId"
-            
-            Get-Content "$(Build.StagingDirectory)/ReleaseConfigs/Channels.txt" | ForEach-Object { $Channels += "$_ ," }
-            Write-Host "##vso[task.setvariable variable=InitialChannels;]$Channels"
+  - template: ../setup-maestro-vars.yml
 
   - job:
     displayName: Symbol Publishing
@@ -114,7 +93,7 @@ stages:
 - stage: PublishValidation
   displayName: Publish Validation
   jobs:
-  - template: setup-maestro-vars.yml
+  - template: ../setup-maestro-vars.yml
 
   - job:
     displayName: Symbol Availability
