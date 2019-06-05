@@ -106,7 +106,7 @@ stages:
       - task: PublishBuildArtifacts@1
         displayName: Publish BAR BuildId to VSTS
         inputs:
-          PathtoPublish: 'D:\a\1\s\artifacts\log\Debug\PublishBuildAssets.binlog'
+          PathtoPublish: 'D:\a\1\s\artifacts\log\Debug\PublishToPackageFeed.binlog'
           PublishLocation: Container
           ArtifactName: ReleaseConfigs
         condition: always()
