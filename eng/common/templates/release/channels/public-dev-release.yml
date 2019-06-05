@@ -155,3 +155,20 @@ stages:
       - powershell: 'darc gather-drop --non-shipping --continue-on-error --id $(BARBuildId) --output-dir $(Agent.BuildDirectory)/Temp/Drop/ --bar-uri $(MaestroApiEndpoint) --password $(MaestroApiPassword)'
         displayName: Run Darc gather-drop
         continueOnError: true
+
+  - job:
+    displayname: Promote Build
+    pool:
+      name: Hosted Windows 2019 with VS2019
+    steps:
+      - task: powershell@1
+        name: setReleaseVars
+        displayName: Set Release Configs Vars
+        inputs:
+          scriptType: inlineScript
+          inlineScript: |
+            $headers = @{
+                'accept' = 'application/json'
+                'Authorization' = 'Bearer $(MaestroApiPassword)'
+            }
+            Invoke-RestMethod -Method Post -Headers $headers -Uri $(MaestroApiEndpoint)/api/channels/10/builds/$(BARBuildId)?api-version=2019-01-16
