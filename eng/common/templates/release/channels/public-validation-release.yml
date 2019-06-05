@@ -9,7 +9,7 @@ stages:
       name: Hosted Windows 2019 with VS2019
     steps:
       - task: DownloadBuildArtifacts@0
-        displayName: 'Download Release Configs'
+        displayName: Download Release Configs
         inputs:
           buildType: current
           artifactName: 'ReleaseConfigs'
@@ -36,19 +36,19 @@ stages:
       name: Hosted Windows 2019 with VS2019
     steps:
       - task: DownloadBuildArtifacts@0
-        displayName: 'Download Package Artifacts'
+        displayName: Download Package Artifacts
         inputs:
           buildType: current
           artifactName: 'PackageArtifacts'
 
       - task: DownloadBuildArtifacts@0
-        displayName: 'Download Blob Artifacts'
+        displayName: Download Blob Artifacts
         inputs:
           buildType: current
           artifactName: 'BlobArtifacts'
 
       - task: DownloadBuildArtifacts@0
-        displayName: 'Download Asset Manifests'
+        displayName: Download Asset Manifests
         inputs:
           buildType: current
           artifactName: 'AssetManifests'
@@ -80,7 +80,7 @@ stages:
       name: Hosted Windows 2019 with VS2019
     steps:
       - task: DownloadBuildArtifacts@0
-        displayName: 'Download Release Configs'
+        displayName: Download Release Configs
         inputs:
           buildType: current
           artifactName: 'ReleaseConfigs'
@@ -94,11 +94,11 @@ stages:
             Write-Host "##vso[task.setvariable variable=BARBuildId;]$BarId"
 
       - task: PowerShell@2
-        displayName: 'Setup Darc CLI'
+        displayName: Setup Darc CLI
         inputs:
           targetType: filePath
           filePath: '$(Build.SourcesDirectory)/eng/common/darc-init.ps1'
 
       - powershell: 'darc gather-drop --id $(BARBuildId) --output-dir $(Agent.BuildDirectory)/Temp/Drop/ --bar-uri $(MaestroApiEndpoint) --password $(MaestroApiPassword)'
-        displayName: 'Run Darc gather-drop'
+        displayName: Run Darc gather-drop
         continueOnError: true
