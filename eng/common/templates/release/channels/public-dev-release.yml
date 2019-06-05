@@ -128,14 +128,14 @@ stages:
       - task: powershell@1
         name: setReleaseVars
         displayName: Set Release Configs Vars
-          inputs:
-            scriptType: inlineScript
-            inlineScript: |
-              $BarId = Get-Content "$(Build.StagingDirectory)/ReleaseConfigs/BARBuildId.txt" 
-              Write-Host "##vso[task.setvariable variable=BARBuildId;]$BarId"
+        inputs:
+          scriptType: inlineScript
+          inlineScript: |
+            $BarId = Get-Content "$(Build.StagingDirectory)/ReleaseConfigs/BARBuildId.txt" 
+            Write-Host "##vso[task.setvariable variable=BARBuildId;]$BarId"
             
-              Get-Content "$(Build.StagingDirectory)/ReleaseConfigs/Channels.txt" | ForEach-Object { $Channels += "$_ ," }
-              Write-Host "##vso[task.setvariable variable=InitialChannels;]$Channels"
+            Get-Content "$(Build.StagingDirectory)/ReleaseConfigs/Channels.txt" | ForEach-Object { $Channels += "$_ ," }
+            Write-Host "##vso[task.setvariable variable=InitialChannels;]$Channels"
 
   - job:
     displayName: Symbol Availability
