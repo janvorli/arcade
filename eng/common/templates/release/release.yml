@@ -21,6 +21,7 @@ stages:
           arguments: -task SigningValidation -restore -msbuildEngine dotnet
             /p:PackageBasePath='$(Build.ArtifactStagingDirectory)/PackageArtifacts'
             /p:Configuration=Release
+        continueOnError: true
         
   - job:
     displayName: SourceLink Validation
@@ -39,9 +40,13 @@ stages:
       - task: PowerShell@2
         displayName: Validate
         inputs:
-          targetType: filePath
           filePath: $(Build.SourcesDirectory)/eng/common/publishing/SourceLinkValidation.ps1
-          arguments: -InputPath $(Build.ArtifactStagingDirectory)\BlobArtifacts\ -ExtractPath $(Agent.BuildDirectory)\Extract\ -SourceLinkToolPath $(Agent.BuildDirectory)\SourceLinkTool\ -SkipRepoCaching false -GHRepoName $(Build.Repository.Name) -GHCommit $(Build.SourceVersion)
+          arguments: -InputPath $(Build.ArtifactStagingDirectory)\BlobArtifacts\ 
+            -ExtractPath $(Agent.BuildDirectory)\Extract\ 
+            -SourceLinkToolPath $(Agent.BuildDirectory)\SourceLinkTool\ 
+            -SkipRepoCaching false 
+            -GHRepoName $(Build.Repository.Name) 
+            -GHCommit $(Build.SourceVersion)
         continueOnError: true
 
 - template: \eng\common\templates\release\channels\public-dev-release.yml
