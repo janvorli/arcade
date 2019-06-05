@@ -58,7 +58,7 @@ stages:
   - job:
     displayName: Gather Drop
     dependsOn: setupMaestroVars
-    condition: contains(dependencies.setupMaestroVars.outputs['setReleaseVars.InitialChannels'], 12)
+    condition: contains(dependencies.setupMaestroVars.outputs['setReleaseVars.InitialChannels'], 11)
     variables:
       BARBuildId: $[ dependencies.setupMaestroVars.outputs['setReleaseVars.BARBuildId'] ]
     pool:

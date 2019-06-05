@@ -17,7 +17,7 @@ jobs:
         scriptType: inlineScript
         inlineScript: |
           $BarId = Get-Content "$(Build.StagingDirectory)/ReleaseConfigs/BARBuildId.txt" 
-          Write-Host "##vso[task.setvariable variable=BARBuildId;]$BarId"
+          Write-Host "##vso[task.setvariable variable=BARBuildId;isoutput=true]$BarId"
             
           Get-Content "$(Build.StagingDirectory)/ReleaseConfigs/Channels.txt" | ForEach-Object { $Channels += "$_ ," }
-          Write-Host "##vso[task.setvariable variable=InitialChannels;]$Channels"
+          Write-Host "##vso[task.setvariable variable=InitialChannels;isoutput=true]$Channels"
