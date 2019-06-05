@@ -57,18 +57,18 @@ stages:
         displayName: Publish
         inputs:
           filePath: eng\common\sdk-task.ps1
-          arguments: -task PublishToPackageFeed -restore -msbuildEngine dotnet
-            /p:AccountKeyToStaticFeed=$(dotnetfeed-storage-access-key-1)
-            /p:BARBuildId=$(BARBuildId)
-            /p:MaestroApiEndpoint=$(MaestroApiEndpoint)
-            /p:BuildAssetRegistryToken=$(MaestroApiPassword)
-            /p:ManifestsBasePath=$(Build.ArtifactStagingDirectory)\AssetManifests\
-            /p:BlobBasePath=$(Build.ArtifactStagingDirectory)\BlobArtifacts\
-            /p:PackageBasePath=$(Build.ArtifactStagingDirectory)\PackageArtifacts\
-            /p:ArtifactsCategory=.NETCoreValidation
-            /p:OverrideAssetsWithSameName=true
-            /p:PassIfExistingItemIdentical=true
-            /p:Configuration=Release
+          arguments: -task PublishToPackageFeed -restore -msbuildEngine dotnet 
+            /p:AccountKeyToStaticFeed='$(dotnetfeed-storage-access-key-1)' 
+            /p:BARBuildId=$(BARBuildId) 
+            /p:MaestroApiEndpoint='$(MaestroApiEndpoint)'
+            /p:BuildAssetRegistryToken='$(MaestroApiPassword)' 
+            /p:ManifestsBasePath='$(Build.ArtifactStagingDirectory)/AssetManifests/' 
+            /p:BlobBasePath='$(Build.ArtifactStagingDirectory)/BlobArtifacts/' 
+            /p:PackageBasePath='$(Build.ArtifactStagingDirectory)/PackageArtifacts/' 
+            /p:ArtifactsCategory='.NETCoreValidation' 
+            /p:OverrideAssetsWithSameName=true 
+            /p:PassIfExistingItemIdentical=true 
+            /p:Configuration=Release 
 
 
 - stage: PVR_PublishValidation

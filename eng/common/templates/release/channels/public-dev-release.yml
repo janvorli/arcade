@@ -88,7 +88,18 @@ stages:
         displayName: Publish
         inputs:
           filePath: eng\common\sdk-task.ps1
-          arguments: -task PublishToPackageFeed -restore -msbuildEngine dotnet /p:AccountKeyToStaticFeed='$(dotnetfeed-storage-access-key-1)' /p:BARBuildId=$(BARBuildId) /p:MaestroApiEndpoint='$(MaestroApiEndpoint)' /p:BuildAssetRegistryToken='$(MaestroApiPassword)' /p:ManifestsBasePath='$(Build.ArtifactStagingDirectory)/AssetManifests/' /p:BlobBasePath='$(Build.ArtifactStagingDirectory)/BlobArtifacts/' /p:PackageBasePath='$(Build.ArtifactStagingDirectory)/PackageArtifacts/' /p:ArtifactsCategory='.NETCore' /p:OverrideAssetsWithSameName=true /p:PassIfExistingItemIdentical=true /p:Configuration=Release 
+          arguments: -task PublishToPackageFeed -restore -msbuildEngine dotnet 
+            /p:AccountKeyToStaticFeed='$(dotnetfeed-storage-access-key-1)' 
+            /p:BARBuildId=$(BARBuildId) 
+            /p:MaestroApiEndpoint='$(MaestroApiEndpoint)'
+            /p:BuildAssetRegistryToken='$(MaestroApiPassword)' 
+            /p:ManifestsBasePath='$(Build.ArtifactStagingDirectory)/AssetManifests/' 
+            /p:BlobBasePath='$(Build.ArtifactStagingDirectory)/BlobArtifacts/' 
+            /p:PackageBasePath='$(Build.ArtifactStagingDirectory)/PackageArtifacts/' 
+            /p:ArtifactsCategory='.NETCore' 
+            /p:OverrideAssetsWithSameName=true 
+            /p:PassIfExistingItemIdentical=true 
+            /p:Configuration=Release 
         continueOnError: true
 
       - task: PublishBuildArtifacts@1
@@ -103,6 +114,29 @@ stages:
 - stage: PublishValidation
   displayName: Publish Validation
   jobs:
+    - job: setupMaestroVars
+      displayName: Setup Maestro Vars
+      pool:
+        name: Hosted Windows 2019 with VS2019
+      steps:
+        - task: DownloadBuildArtifacts@0
+          displayName: Download Release Configs
+          inputs:
+            buildType: current
+            artifactName: 'ReleaseConfigs'
+
+        - task: powershell@1
+          name: setReleaseVars
+          displayName: Set Release Configs Vars
+          inputs:
+            scriptType: inlineScript
+            inlineScript: |
+              $BarId = Get-Content "$(Build.StagingDirectory)/ReleaseConfigs/BARBuildId.txt" 
+              Write-Host "##vso[task.setvariable variable=BARBuildId;]$BarId"
+            
+              Get-Content "$(Build.StagingDirectory)/ReleaseConfigs/Channels.txt" | ForEach-Object { $Channels += "$_ ," }
+              Write-Host "##vso[task.setvariable variable=InitialChannels;]$Channels"
+
   - job:
     displayName: Symbol Availability
     pool:
@@ -156,6 +190,9 @@ stages:
 
   - job:
     displayName: Promote Build
+    dependsOn: setupMaestroVars
+    variables:
+      BARBuildId: $[ dependencies.setupMaestroVars.outputs['setReleaseVars.BARBuildId'] ]
     pool:
       name: Hosted Windows 2019 with VS2019
     steps:
