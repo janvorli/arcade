@@ -70,7 +70,7 @@ jobs:
       inputs:
         scriptType: inlineScript
         inlineScript: |
-          Add-Content -Path  "$(Build.StagingDirectory)/Channels.txt" -Value "10`n11"
+          Add-Content -Path  "$(Build.StagingDirectory)/Channels.txt" -Value "1`n4"
     - task: PublishBuildArtifacts@1
       displayName: Publish BAR BuildId to VSTS
       inputs:
