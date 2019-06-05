@@ -74,6 +74,6 @@ stages:
         displayName: Run Darc gather-drop
         continueOnError: true
 
-  - template: ../setup-maestro-vars.yml
+  - template: ../promote-build.yml
     parameters:
       ChannelId: 11
