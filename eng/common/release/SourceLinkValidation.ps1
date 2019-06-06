@@ -166,6 +166,7 @@ function ValidateSourceLinkLinks {
   }
   catch {
     Write-Host "Problems downloading the list of files from the repo. Url used: $RepoTreeURL"
+    Write-Host $_
     $global:LASTEXITCODE = 1
     return
   }
