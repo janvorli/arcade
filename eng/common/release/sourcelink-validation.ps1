@@ -192,7 +192,8 @@ function ValidateSourceLinkLinks {
 
 try {
   Write-Host "Installing SourceLink CLI..."
-  . .\sourcelink-cli-init.ps1 -sourcelinkCliVersion $SourcelinkCliVersion
+  Get-Location
+  . $PSScriptRoot\sourcelink-cli-init.ps1 -sourcelinkCliVersion $SourcelinkCliVersion
   CheckExitCode "Running sourcelink-cli-init"
 
   Measure-Command { ValidateSourceLinkLinks }
