@@ -1,15 +1,18 @@
 param(
-  [Parameter(Mandatory=$true)][string] $InputPath,           # Full path to directory where Symbols.NuGet packages to be checked are stored
-  [Parameter(Mandatory=$true)][string] $ExtractPath,         # Full path to directory where the packages will be extracted during validation
-  [Parameter(Mandatory=$true)][string] $SourceLinkToolPath,  # Full path to directory where dotnet SourceLink CLI was installed
-  [Parameter(Mandatory=$false)][string] $GHRepoName,         # GitHub name of the repo including the Org. E.g., dotnet/arcade
-  [Parameter(Mandatory=$false)][string] $GHCommit            # GitHub commit SHA used to build the packages
+  [Parameter(Mandatory=$true)][string] $InputPath,              # Full path to directory where Symbols.NuGet packages to be checked are stored
+  [Parameter(Mandatory=$true)][string] $ExtractPath,            # Full path to directory where the packages will be extracted during validation
+  [Parameter(Mandatory=$false)][string] $GHRepoName,            # GitHub name of the repo including the Org. E.g., dotnet/arcade
+  [Parameter(Mandatory=$false)][string] $GHCommit,              # GitHub commit SHA used to build the packages
+  [Parameter(Mandatory=$false)][string] $SourcelinkCliVersion   # GitHub commit SHA used to build the packages
 )
 
 # Cache/HashMap (File -> Exist flag) used to consult whether a file exist 
 # in the repository at a specific commit point. This is populated by inserting
 # all files present in the repo at a specific commit point.
 $global:RepoFiles = @{}
+
+$ErrorActionPreference = "Stop"
+. $PSScriptRoot\tools.ps1
 
 $ValidatePackage = {
   param( 
@@ -62,7 +65,7 @@ $ValidatePackage = {
           # Makes easier to reference `sourcelink cli`
           Push-Location $using:SourceLinkToolPath
 
-          $SourceLinkInfos = .\sourcelink.exe print-urls $FullPath | Out-String
+          $SourceLinkInfos = sourcelink print-urls $FullPath | Out-String
 
           if ($LASTEXITCODE -eq 0 -and -not ([string]::IsNullOrEmpty($SourceLinkInfos))) {
             $NumFailedLinks = 0
@@ -187,4 +190,16 @@ function ValidateSourceLinkLinks {
   }
 }
 
-Measure-Command { ValidateSourceLinkLinks }
+try {
+  Write-Host "Installing SourceLink CLI..."
+  . .\sourcelink-cli-init.ps1 -sourcelinkCliVersion $SourcelinkCliVersion
+  CheckExitCode "Running sourcelink-cli-init"
+
+  Measure-Command { ValidateSourceLinkLinks }
+}
+catch {
+  Write-Host $_
+  Write-Host $_.Exception
+  Write-Host $_.ScriptStackTrace
+  ExitWithExitCode 1
+}
