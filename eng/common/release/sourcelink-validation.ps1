@@ -152,7 +152,7 @@ function ValidateSourceLinkLinks {
     return
   }
 
-  $RepoTreeURL = -Join("https://api.github.com/repos/", $GHRepoName, "/git/trees/", $GHCommit, "?recursive=1")
+  $RepoTreeURL = -Join("http://api.github.com/repos/", $GHRepoName, "/git/trees/", $GHCommit, "?recursive=1")
   $CodeExtensions = @(".cs", ".vb", ".fs", ".fsi", ".fsx", ".fsscript")
 
   try {
