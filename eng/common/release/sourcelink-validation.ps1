@@ -12,7 +12,7 @@ param(
 $global:RepoFiles = @{}
 
 $ErrorActionPreference = "Stop"
-. $PSScriptRoot\tools.ps1
+. $PSScriptRoot\..\tools.ps1
 
 $ValidatePackage = {
   param( 
