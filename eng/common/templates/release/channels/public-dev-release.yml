@@ -123,8 +123,8 @@ stages:
       - task: PowerShell@2
         displayName:  Install DotNet Symbol
         inputs:
-          scriptType: inlineScript
-          inlineScript: |
+          targetType: inline
+          script: |
             dotnet tool install dotnet-symbol --tool-path $(Agent.BuildDirectory)/SymbolTool --version $(SymbolToolVersion) --add-source https://api.nuget.org/v3/index.json
         
       - task: PowerShell@2
@@ -153,8 +153,8 @@ stages:
       - task: PowerShell@2
         displayName: Run Darc gather-drop
         inputs:
-          scriptType: inlineScript
-          inlineScript: |
+          targetType: inline
+          script: |
             darc gather-drop --non-shipping --continue-on-error --id $(BARBuildId) --output-dir $(Agent.BuildDirectory)/Temp/Drop/ --bar-uri $(MaestroApiEndpoint) --password $(MaestroApiPassword)
         continueOnError: true
 

@@ -47,8 +47,8 @@ stages:
       - task: PowerShell@2
         displayName: Install SourceLink CLI
         inputs:
-          scriptType: inlineScript
-          inlineScript: |
+          targetType: inline
+          script: |
             dotnet tool install sourcelink --tool-path $(Agent.BuildDirectory)/SourceLinkTool --version $(SourceLinkCLIVersion)
         
       - task: PowerShell@2

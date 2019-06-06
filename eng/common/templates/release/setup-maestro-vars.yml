@@ -21,8 +21,8 @@ jobs:
       name: setReleaseVars
       displayName: Set Release Configs Vars
       inputs:
-        scriptType: inlineScript
-        inlineScript: |
+        targetType: inline
+        script: |
           $BarId = Get-Content "$(Build.StagingDirectory)/ReleaseConfigs/BARBuildId.txt" 
           Write-Host "##vso[task.setvariable variable=BARBuildId;isoutput=true]$BarId"
             

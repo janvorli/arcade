@@ -20,8 +20,8 @@ jobs:
     - task: PowerShell@2
       displayName: Add Build to Channel
       inputs:
-        scriptType: inlineScript
-        inlineScript: |
+        targetType: inline
+        script: |
           $headers = @{
             "Accept" = "application/json"
             "Authorization" = "Bearer $(MaestroApiPassword)"

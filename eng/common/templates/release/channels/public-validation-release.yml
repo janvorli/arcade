@@ -93,8 +93,8 @@ stages:
       - task: PowerShell@2
         displayName: Run Darc gather-drop
         inputs:
-          scriptType: inlineScript
-          inlineScript: |
+          targetType: inline
+          script: |
             darc gather-drop --non-shipping --continue-on-error --id $(BARBuildId) --output-dir $(Agent.BuildDirectory)/Temp/Drop/ --bar-uri $(MaestroApiEndpoint) --password $(MaestroApiPassword)
         continueOnError: true
 
