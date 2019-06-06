@@ -63,5 +63,13 @@ stages:
         continueOnError: true
 
 - template: \eng\common\templates\release\channels\public-dev-release.yml
+  parameters:
+    pool:
+      name: ${{ parameters.pool.name }}
+      queue: ${{ parameters.pool.queue }}
 
 - template: \eng\common\templates\release\channels\public-validation-release.yml
+  parameters:
+    pool:
+      name: ${{ parameters.pool.name }}
+      queue: ${{ parameters.pool.queue }}

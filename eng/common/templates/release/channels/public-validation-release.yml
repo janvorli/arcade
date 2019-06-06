@@ -1,3 +1,9 @@
+parameters:
+  # Which target pool should be used
+  pool:
+    name: 'NetCoreInternal-Pool'
+    queue: 'BuildPool.Windows.10.Amd64.VS2017'
+
 stages:
 - stage: PVR_Publish
   dependsOn: validate
@@ -6,6 +12,10 @@ stages:
   displayName: Validation Channel
   jobs:
   - template: ../setup-maestro-vars.yml
+    parameters:
+      pool:
+        name: ${{ parameters.pool.name }}
+        queue: ${{ parameters.pool.queue }}
 
   - job:
     displayName: Publish to Static Feed
@@ -14,7 +24,8 @@ stages:
     variables:
       BARBuildId: $[ dependencies.setupMaestroVars.outputs['setReleaseVars.BARBuildId'] ]
     pool:
-      name: Hosted Windows 2019 with VS2019
+      name: ${{ parameters.pool.name }}
+      queue: ${{ parameters.pool.queue }}
     steps:
       - task: DownloadBuildArtifacts@0
         displayName: Download Package Artifacts
@@ -58,6 +69,10 @@ stages:
     - template: ../common-variables.yml
   jobs:
   - template: ../setup-maestro-vars.yml
+    parameters:
+      pool:
+        name: ${{ parameters.pool.name }}
+        queue: ${{ parameters.pool.queue }}
 
   - job:
     displayName: Gather Drop
@@ -66,7 +81,8 @@ stages:
     variables:
       BARBuildId: $[ dependencies.setupMaestroVars.outputs['setReleaseVars.BARBuildId'] ]
     pool:
-      name: Hosted Windows 2019 with VS2019
+      name: ${{ parameters.pool.name }}
+      queue: ${{ parameters.pool.queue }}
     steps:
       - task: PowerShell@2
         displayName: Setup Darc CLI
@@ -85,3 +101,6 @@ stages:
   - template: ../promote-build.yml
     parameters:
       ChannelId: ${{ variables.PublicValidationRelease_Channel_Id }}
+      pool:
+        name: ${{ parameters.pool.name }}
+        queue: ${{ parameters.pool.queue }}
