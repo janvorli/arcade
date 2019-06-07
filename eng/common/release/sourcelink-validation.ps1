@@ -62,7 +62,9 @@ $ValidatePackage = {
             [ref] $FailedFiles
           )
 
-          $SourceLinkInfos = sourcelink print-urls $FullPath | Out-String
+          $sourcelinkExe = "$env:USERPROFILE\.dotnet\tools"
+          $sourcelinkExe = Resolve-Path "$sourcelinkExe\sourcelink.exe"
+          $SourceLinkInfos = & $sourcelinkExe print-urls $FullPath | Out-String
 
           if ($LASTEXITCODE -eq 0 -and -not ([string]::IsNullOrEmpty($SourceLinkInfos))) {
             $NumFailedLinks = 0
