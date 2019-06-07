@@ -1,5 +1,5 @@
 param (
-    $sourcelinkCliVersion = $null
+  $sourcelinkCliVersion = $null
 )
 
 $ErrorActionPreference = "Stop"

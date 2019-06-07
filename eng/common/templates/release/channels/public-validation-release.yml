@@ -85,7 +85,7 @@ stages:
         inputs:
           targetType: inline
           script: |
-            darc gather-drop --non-shipping --continue-on-error --id $(BARBuildId) --output-dir $(Agent.BuildDirectory)/Temp/Drop/ --bar-uri $(MaestroApiEndpoint) --password $(MaestroApiPassword)
+            darc gather-drop --non-shipping --continue-on-error --id $(BARBuildId) --output-dir $(DarcDropPath) --bar-uri $(MaestroApiEndpoint) --password $(MaestroApiPassword)
         continueOnError: true
 
   - template: ../promote-build.yml

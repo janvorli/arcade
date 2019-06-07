@@ -1,5 +1,5 @@
 param (
-    $dotnetsymbolVersion = $null
+  $dotnetsymbolVersion = $null
 )
 
 $ErrorActionPreference = "Stop"

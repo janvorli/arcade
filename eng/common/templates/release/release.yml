@@ -41,7 +41,7 @@ stages:
         inputs:
           filePath: $(Build.SourcesDirectory)/eng/common/release/sourcelink-validation.ps1
           arguments: -InputPath $(Build.ArtifactStagingDirectory)/BlobArtifacts/ 
-            -ExtractPath $(Agent.BuildDirectory)/Extract/ 
+            -ExtractPath $(SourceLinkValidationExtractPath) 
             -GHRepoName $(Build.Repository.Name) 
             -GHCommit $(Build.SourceVersion)
             -SourcelinkCliVersion $(SourceLinkCLIVersion)

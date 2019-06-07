@@ -97,6 +97,7 @@ function Write-LoggingCommand {
     }
 
     $command = Format-LoggingCommand -Area $Area -Event $Event -Data $Data -Properties $Properties
+    write-host "Write-LoggingCommand -> command: $command AsOutput: $AsOutput"
     if ($AsOutput) {
         $command
     } else {
