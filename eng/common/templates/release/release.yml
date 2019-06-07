@@ -1,8 +1,8 @@
 parameters:
   # Which target pool should be used
   pool:
-    name: 'NetCoreInternal-Pool'
-    queue: 'BuildPool.Windows.10.Amd64.VS2017'
+    name: 'Hosted Windows 2019 with VS2019'
+    queue: ''
 
 stages:
 - stage: validate
