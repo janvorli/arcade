@@ -88,7 +88,7 @@ $ValidatePackage = {
                     
                       # Only GitHub links are valid
                       if ($Uri.AbsoluteURI -ne $null -and $Uri.Host -match "github") {
-                        $Status = (Invoke-WebRequest -Uri $Link -UseBasicParsing -Method HEAD -TimeoutSec 5).StatusCode
+                        $Status = (Invoke-WebRequest -UseBasicParsing -Uri $Link -UseBasicParsing -Method HEAD -TimeoutSec 5).StatusCode
                       }
                       else {
                         $Status = 0
@@ -157,7 +157,7 @@ function ValidateSourceLinkLinks {
 
   try {
     # Retrieve the list of files in the repo at that particular commit point and store them in the RepoFiles hash
-    $Data = Invoke-WebRequest $RepoTreeURL | ConvertFrom-Json | Select-Object -ExpandProperty tree
+    $Data = Invoke-WebRequest $RepoTreeURL -UseBasicParsing | ConvertFrom-Json | Select-Object -ExpandProperty tree
   
     foreach ($file in $Data) {
       $Extension = [System.IO.Path]::GetExtension($file.path)
