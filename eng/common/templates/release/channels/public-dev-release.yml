@@ -107,7 +107,7 @@ stages:
         displayName: Check Symbol Availability
         inputs:
           filePath: $(Build.SourcesDirectory)/eng/common/release/symbols-validation.ps1
-          arguments: -InputPath $(Build.SourcesDirectory)/PackageArtifacts/ -ExtractPath $(Agent.BuildDirectory)/Temp/ -DotnetSymbolVersion $(SymbolToolVersion)
+          arguments: -InputPath $(Build.ArtifactStagingDirectory)/PackageArtifacts/ -ExtractPath $(Agent.BuildDirectory)/Temp/ -DotnetSymbolVersion $(SymbolToolVersion)
         continueOnError: true
 
   - job:
