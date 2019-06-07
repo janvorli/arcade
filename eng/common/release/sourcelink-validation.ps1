@@ -1,9 +1,9 @@
 param(
   [Parameter(Mandatory=$true)][string] $InputPath,              # Full path to directory where Symbols.NuGet packages to be checked are stored
   [Parameter(Mandatory=$true)][string] $ExtractPath,            # Full path to directory where the packages will be extracted during validation
-  [Parameter(Mandatory=$true)][string] $GHRepoName,            # GitHub name of the repo including the Org. E.g., dotnet/arcade
-  [Parameter(Mandatory=$true)][string] $GHCommit,              # GitHub commit SHA used to build the packages
-  [Parameter(Mandatory=$true)][string] $SourcelinkCliVersion   # GitHub commit SHA used to build the packages
+  [Parameter(Mandatory=$true)][string] $GHRepoName,             # GitHub name of the repo including the Org. E.g., dotnet/arcade
+  [Parameter(Mandatory=$true)][string] $GHCommit,               # GitHub commit SHA used to build the packages
+  [Parameter(Mandatory=$true)][string] $SourcelinkCliVersion    # Version of SourceLink CLI to use
 )
 
 # Cache/HashMap (File -> Exist flag) used to consult whether a file exist 

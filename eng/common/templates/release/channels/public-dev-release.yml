@@ -121,18 +121,11 @@ stages:
           artifactName: PackageArtifacts
 
       - task: PowerShell@2
-        displayName:  Install DotNet Symbol
-        inputs:
-          targetType: inline
-          script: |
-            dotnet tool install dotnet-symbol --tool-path $(Agent.BuildDirectory)/SymbolTool --version $(SymbolToolVersion) --add-source https://api.nuget.org/v3/index.json
-        
-      - task: PowerShell@2
         displayName: Check Symbol Availability
         inputs:
-          targetType: filePath
-          filePath: '$(Build.SourcesDirectory)/eng/common/release/CheckSymbols.ps1'
-          arguments: -InputPath $(Build.ArtifactStagingDirectory)/PackageArtifacts/ -ExtractPath $(Agent.BuildDirectory)/Temp/ -SymbolToolPath $(Agent.BuildDirectory)/SymbolTool/
+          filePath: $(Build.SourcesDirectory)/eng/common/release/symbols-validation.ps1
+          arguments: -InputPath $(Build.ArtifactStagingDirectory)/PackageArtifacts/ -ExtractPath $(Agent.BuildDirectory)/Temp/ -$DotnetSymbolVersion $(SymbolToolVersion)
+        continueOnError: true
 
   - job:
     displayName: Gather Drop
