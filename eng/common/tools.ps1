@@ -624,9 +624,6 @@ $ToolsetDir = Join-Path $ArtifactsDir "toolset"
 $ToolsDir = Join-Path $RepoRoot ".tools"
 $LogDir = Join-Path (Join-Path $ArtifactsDir "log") $configuration
 $TempDir = Join-Path (Join-Path $ArtifactsDir "tmp") $configuration
-$SourceLinkValidationExtractPath = Join-Path $TempDir "sl_extract"
-$DarcDropPath = Join-Path $TempDir "darc_drop"
-$SymbolValidationExtractPath =  Join-Path $TempDir "symbol_extract"
 $GlobalJson = Get-Content -Raw -Path (Join-Path $RepoRoot "global.json") | ConvertFrom-Json
 # true if global.json contains a "runtimes" section
 $globalJsonHasRuntimes = if ($GlobalJson.tools.PSObject.Properties.Name -Match 'runtimes') { $true } else { $false }
@@ -634,15 +631,9 @@ $globalJsonHasRuntimes = if ($GlobalJson.tools.PSObject.Properties.Name -Match '
 Create-Directory $ToolsetDir
 Create-Directory $TempDir
 Create-Directory $LogDir
-Create-Directory $SourceLinkValidationExtractPath
-Create-Directory $DarcDropPath
-Create-Directory $SymbolValidationExtractPath
 
 Write-PipelineSetVariable -Name 'Artifacts' -Value $ArtifactsDir
 Write-PipelineSetVariable -Name 'Artifacts.Toolset' -Value $ToolsetDir
 Write-PipelineSetVariable -Name 'Artifacts.Log' -Value $LogDir
 Write-PipelineSetVariable -Name 'TEMP' -Value $TempDir
 Write-PipelineSetVariable -Name 'TMP' -Value $TempDir
-Write-PipelineSetVariable -Name 'SourceLinkValidationExtractPath' -Value $SourceLinkValidationExtractPath
-Write-PipelineSetVariable -Name 'DarcDropPath' -Value $DarcDropPath
-Write-PipelineSetVariable -Name 'SymbolValidationExtractPath' -Value $SymbolValidationExtractPath
