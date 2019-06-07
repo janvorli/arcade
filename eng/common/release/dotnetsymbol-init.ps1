@@ -2,8 +2,12 @@ param (
     $dotnetsymbolVersion = $null
 )
 
-$verbosity = "minimal"
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version 2.0
+
 . $PSScriptRoot\..\tools.ps1
+
+$verbosity = "minimal"
 
 function Installdotnetsymbol ($dotnetsymbolVersion) {
   $dotnetsymbolPackageName = "dotnet-symbol"

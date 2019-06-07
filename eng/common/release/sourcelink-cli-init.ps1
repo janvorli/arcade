@@ -2,8 +2,12 @@ param (
     $sourcelinkCliVersion = $null
 )
 
-$verbosity = "minimal"
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version 2.0
+
 . $PSScriptRoot\..\tools.ps1
+
+$verbosity = "minimal"
 
 function InstallSourcelinkCli ($sourcelinkCliVersion) {
   $sourcelinkCliPackageName = "sourcelink"

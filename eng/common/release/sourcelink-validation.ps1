@@ -6,13 +6,15 @@ param(
   [Parameter(Mandatory=$true)][string] $SourcelinkCliVersion    # Version of SourceLink CLI to use
 )
 
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version 2.0
+
+. $PSScriptRoot\..\tools.ps1
+
 # Cache/HashMap (File -> Exist flag) used to consult whether a file exist 
 # in the repository at a specific commit point. This is populated by inserting
 # all files present in the repo at a specific commit point.
 $global:RepoFiles = @{}
-
-$ErrorActionPreference = "Stop"
-. $PSScriptRoot\..\tools.ps1
 
 $ValidatePackage = {
   param( 
