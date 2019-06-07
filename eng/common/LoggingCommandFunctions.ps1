@@ -51,6 +51,8 @@ function Format-LoggingCommand {
     [System.Text.StringBuilder]$sb = New-Object -TypeName System.Text.StringBuilder
     $null = $sb.Append($script:loggingCommandPrefix).Append($Area).Append('.').Append($Event)
 
+    write-host "Format-LoggingCommand"
+
     # Append the properties.
     if ($Properties) {
         $first = $true
@@ -88,7 +90,7 @@ function Write-LoggingCommand {
         [Parameter(Mandatory = $true, ParameterSetName = 'Object')]
         $Command,
         [switch]$AsOutput)
-
+    write-host "Write-LoggingCommand"
     if ($PSCmdlet.ParameterSetName -eq 'Object') {
         Write-LoggingCommand -Area $Command.Area -Event $Command.Event -Data $Command.Data -Properties $Command.Properties -AsOutput:$AsOutput
         return

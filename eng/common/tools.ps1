@@ -2,7 +2,7 @@
 # These may be defined as parameters of the importing script, or set after importing this script.
 
 # CI mode - set to true on CI server for PR validation build or official build.
-[bool]$ci = if (Test-Path variable:ci) { $ci } else { $false }
+[bool]$ci = $true#if (Test-Path variable:ci) { $ci } else { $false }
 
 # Build configuration. Common values include 'Debug' and 'Release', but the repository may use other names.
 [string]$configuration = if (Test-Path variable:configuration) { $configuration } else { "Debug" }
@@ -134,7 +134,7 @@ function Write-PipelineSetVariable {
     [string]$Value,
     [switch]$Secret,
     [switch]$AsOutput)
-
+    write-host "PipelineSetVariable ci=$ci name=$Name Value=$Value"
     if($ci) {
       Write-LoggingCommand -Area 'task' -Event 'setvariable' -Data $Value -Properties @{
         'variable' = $Name
