@@ -20,6 +20,7 @@ jobs:
              
           $BarId = Get-Content "$(Build.StagingDirectory)/ReleaseConfigs/BARBuildId.txt" 
           Write-PipelineSetVariable -Name 'BARBuildId' -Value $BarId -AsOutput
-            
+          
+          $Channels = ""
           Get-Content "$(Build.StagingDirectory)/ReleaseConfigs/Channels.txt" | ForEach-Object { $Channels += "$_ ," }
           Write-PipelineSetVariable -Name 'InitialChannels' -Value "$Channels" -AsOutput
