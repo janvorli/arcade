@@ -62,9 +62,6 @@ $ValidatePackage = {
             [ref] $FailedFiles
           )
 
-          # Makes easier to reference `sourcelink cli`
-          Push-Location $using:SourceLinkToolPath
-
           $SourceLinkInfos = sourcelink print-urls $FullPath | Out-String
 
           if ($LASTEXITCODE -eq 0 -and -not ([string]::IsNullOrEmpty($SourceLinkInfos))) {
